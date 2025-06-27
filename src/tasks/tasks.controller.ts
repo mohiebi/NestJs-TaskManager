@@ -3,7 +3,7 @@ import { TasksService } from './tasks.service';
 import { Itask } from './task.model';
 import { CreateTaskDto } from './create-task.dto';
 import { FindOneParams } from './find-one.params';
-import { updateTaskStatus } from './update-task-status.dto';
+import { updateTaskStatusDto } from './update-task-status.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -26,7 +26,7 @@ export class TasksController {
     @Patch('/:id/status')
     public updateTaskStatus(
         @Param() params: FindOneParams,
-        @Body() body: updateTaskStatus,
+        @Body() body: updateTaskStatusDto,
     ): Itask {
         const task = this.findOneOrFail(params.id);
         task.status = body.status;

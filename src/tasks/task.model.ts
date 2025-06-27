@@ -6,7 +6,7 @@ export interface Itask{
 }
 
 export enum TaskStatus {
-    OPEN = 'OPEM',
+    OPEN = 'OPEN',
     IN_PROGRESS = 'IN_PROGRESS',
     DONE = 'DONE',
 }

@@ -24,15 +24,15 @@ export class TasksController {
         return this.tasksService.create(creatTaskDto);
     }
 
-    //@Patch('/:id/status')
-    //public updateTaskStatus(
-    //    @Param() params: FindOneParams,
-    //    @Body() body: updateTaskStatusDto,
-    //): Itask {
-    //    const task = this.findOneOrFail(params.id);
-    //    task.status = body.status;
-    //   return task;
-    //}
+    @Patch('/:id/status')
+    public updateTaskStatus(
+        @Param() params: FindOneParams,
+        @Body() body: updateTaskStatusDto,
+    ): Itask {
+        const task = this.findOneOrFail(params.id);
+        task.status = body.status;
+       return task;
+    }
 
     @Put('/:id')
     public updateTask(

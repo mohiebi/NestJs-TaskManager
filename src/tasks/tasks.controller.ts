@@ -2,6 +2,7 @@ import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/c
 import { TasksService } from './tasks.service';
 import { Itask } from './task.model';
 import { CreateTaskDto } from './create-task.dto';
+import { FindOneParams } from './find-one.params';
 
 @Controller('tasks')
 export class TasksController {
@@ -12,8 +13,8 @@ export class TasksController {
     }
 
     @Get(':id')
-    public findOne(@Param('id') id: string): Itask {
-        const task = this.tasksService.findOne(id);
+    public findOne(@Param() params: FindOneParams): Itask {
+        const task = this.tasksService.findOne(params.id);
 
         if(!task) {
             throw new NotFoundException;

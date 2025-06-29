@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config/dist/config.service';
-import { ConfigType } from './config/config.types';
+import { TypeConfigService } from './config/type-config.service';
 
 @Injectable()
 export class AppService {
   constructor(
-    private readonly configService: ConfigService<ConfigType>
+    private readonly configService: TypeConfigService
   ) {}
 
   getHello(): string {

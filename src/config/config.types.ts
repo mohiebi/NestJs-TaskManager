@@ -1,5 +1,5 @@
 import * as Joi from "joi";
-import { appConfig, AppConfig } from "./app.config";
+import { AppConfig } from "./app.config";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 
 export interface ConfigType {

@@ -1,37 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { Itask } from './task.model';
 import { CreateTaskDto } from './create-task.dto';
-import { randomUUID } from 'node:crypto';
 import { UpdateTaskDto } from './update-task.dto';
+import { Task } from './task.entity';
+import { Repository } from 'typeorm/repository/Repository';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TasksService {
-    private tasks: Itask[] = [];
+    constructor(
+        @InjectRepository(Task)
+        private readonly tasksRepository: Repository<Task>,
+    ) {}
 
-    public findAll(): Itask[] {
-        return this.tasks;
+    public async findAll(): Promise<Task[]> {
+        return await this.tasksRepository.find();
     }
 
-    public findOne(id: string): Itask | undefined {
-        return this.tasks.find((task) => task.id == id);
+    public async findOne(id: string): Promise<Task | null> {
+        return await this.tasksRepository.findOneBy({ id });
     }
 
-    public create(createTaskDto: CreateTaskDto) : Itask {
-        const task: Itask = {
-            id: randomUUID(),
-            ...createTaskDto,
-        };
-
-        this.tasks.push(task);
-        return task;
+    public async createTask(createTaskDto: CreateTaskDto) : Promise<Task> {
+        return await this.tasksRepository.save(createTaskDto);
     }
 
-    public updateTask(task: Itask , UpdateTaskDto: UpdateTaskDto) : Itask {
+    public async updateTask(task: Task , UpdateTaskDto: UpdateTaskDto) : Promise<Task> {
         Object.assign(task, UpdateTaskDto);
-        return task;
+        return await this.tasksRepository.save(task);
     }
 
-    public deleteTask(task: Itask): void {
-        this.tasks = this.tasks.filter((filteredTask) => filteredTask.id != task.id);
+    public async deleteTask(task: Task): Promise<void> {
+        await this.tasksRepository.remove(task);
     }
 }

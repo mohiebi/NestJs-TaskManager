@@ -28,10 +28,17 @@ export class TasksService {
     }
 
     public async createTask(createTaskDto: CreateTaskDto) : Promise<Task> {
+        if(createTaskDto.labels) {
+            createTaskDto.labels = this.getUniqueLabels(createTaskDto.labels);
+        }
+
         return await this.tasksRepository.save(createTaskDto);
     }
 
     public async updateTask(task: Task , UpdateTaskDto: UpdateTaskDto) : Promise<Task> {
+        if(UpdateTaskDto.labels) {
+            UpdateTaskDto.labels = this.getUniqueLabels(UpdateTaskDto.labels);
+        }
         Object.assign(task, UpdateTaskDto);
         return await this.tasksRepository.save(task);
     }
@@ -41,8 +48,22 @@ export class TasksService {
     }
 
     public async addLabels(task: Task, labelDtos: CreateTaskLabelDto[]): Promise<Task> {
-        const labels = labelDtos.map((label) => this.labelsRepository.create(label));
-        task.labels = [...task.labels, ...labels];
-        return await this.tasksRepository.save(task);
+        const exitingLabels = new Set(task.labels.map(label => label.name));
+        const labels = this.getUniqueLabels(labelDtos)
+            .filter(dtoLabels => !exitingLabels.has(dtoLabels.name))
+            .map((label) => this.labelsRepository.create(label));
+            
+        if(labels.length > 0) {
+            task.labels = [...task.labels, ...labels];
+            return await this.tasksRepository.save(task);
+        }
+
+        return task;
+    }
+
+    private getUniqueLabels(labelDtos: CreateTaskLabelDto[]): CreateTaskLabelDto[] {
+        const uniqueLabels =  [...new Set(labelDtos.map(label => label.name))];
+
+        return uniqueLabels.map(name => ({ name }));
     }
 }

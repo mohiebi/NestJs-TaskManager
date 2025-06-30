@@ -44,7 +44,7 @@ export class TasksService {
     }
 
     public async deleteTask(task: Task): Promise<void> {
-        await this.tasksRepository.remove(task);
+        await this.tasksRepository.delete(task.id);
     }
 
     public async addLabels(task: Task, labelDtos: CreateTaskLabelDto[]): Promise<Task> {
@@ -59,6 +59,16 @@ export class TasksService {
         }
 
         return task;
+    }
+
+    public async removeLabels(
+        task: Task,
+        labelsToRemove: CreateTaskLabelDto[]
+    ): Promise<Task> {
+        // remove labels from task->labels and save() the Task
+        const labelsToRemoveNames = this.getUniqueLabels(labelsToRemove).map(label => label.name);
+        task.labels = task.labels.filter(label => !labelsToRemoveNames.includes(label.name));
+        return await this.tasksRepository.save(task);
     }
 
     private getUniqueLabels(labelDtos: CreateTaskLabelDto[]): CreateTaskLabelDto[] {

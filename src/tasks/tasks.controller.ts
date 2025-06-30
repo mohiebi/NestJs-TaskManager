@@ -5,6 +5,7 @@ import { FindOneParams } from './find-one.params';
 import { updateTaskStatusDto } from './update-task-status.dto';
 import { UpdateTaskDto } from './update-task.dto';
 import { Task } from './task.entity';
+import { CreateTaskLabelDto } from './create-task-label.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -48,6 +49,15 @@ export class TasksController {
     public async deleteTask(@Param() params: FindOneParams): Promise<void> {
         const task = await this.findOneOrFail(params.id);
         await this.tasksService.deleteTask(task);
+    }
+
+    @Post('/:id/labels')
+    public async addLabels(
+        @Param() params: FindOneParams,
+        @Body() labelDtos: CreateTaskLabelDto[],
+    ): Promise<Task> {
+        const task = await this.findOneOrFail(params.id);
+        return await this.tasksService.addLabels(task, labelDtos);
     }
 
     private async findOneOrFail(id: string): Promise<Task> {

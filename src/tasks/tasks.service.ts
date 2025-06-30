@@ -4,12 +4,16 @@ import { UpdateTaskDto } from './update-task.dto';
 import { Task } from './task.entity';
 import { Repository } from 'typeorm/repository/Repository';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateTaskLabelDto } from './create-task-label.dto';
+import { TaskLabel } from './task-label.entity';
 
 @Injectable()
 export class TasksService {
     constructor(
         @InjectRepository(Task)
         private readonly tasksRepository: Repository<Task>,
+        @InjectRepository(TaskLabel)
+        private readonly labelsRepository: Repository<TaskLabel>,
     ) {}
 
     public async findAll(): Promise<Task[]> {
@@ -34,5 +38,11 @@ export class TasksService {
 
     public async deleteTask(task: Task): Promise<void> {
         await this.tasksRepository.remove(task);
+    }
+
+    public async addLabels(task: Task, labelDtos: CreateTaskLabelDto[]): Promise<Task> {
+        const labels = labelDtos.map((label) => this.labelsRepository.create(label));
+        task.labels = [...task.labels, ...labels];
+        return await this.tasksRepository.save(task);
     }
 }

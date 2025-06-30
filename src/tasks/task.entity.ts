@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TaskStatus } from "./task.model";
 import { User } from "src/Users/user.entity";
+import { TaskLabel } from "./task-label.entity";
 
 @Entity()
 export class Task {
@@ -27,6 +28,18 @@ export class Task {
     })
     status : TaskStatus;
 
-   @ManyToOne(() => User, user => user.tasks, {nullable: false})
-   user: User;
+    @Column({
+        type: 'uuid',
+        nullable: false
+    })
+    userId: string;
+
+    @OneToMany(() => TaskLabel, label => label.task, { 
+        cascade: true,
+        orphanedRowAction: 'delete'
+    })
+    labels: TaskLabel[];
+
+    @ManyToOne(() => User, user => user.tasks, {nullable: false})
+    user: User;
 }

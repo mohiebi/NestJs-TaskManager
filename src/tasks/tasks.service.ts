@@ -36,10 +36,20 @@ export class TasksService {
         }
 
         if (filters.labels?.length) {
-            query.andWhere('labels.name IN (:...labels)', { labels: filters.labels });
+            const subQuery = query
+            .subQuery()
+            .select('labels.taskId')
+            .from(TaskLabel, 'labels')
+            .where('labels.name IN (:...names)', { names: filters.labels })
+            .getQuery();
+
+            query.andWhere(`task.id IN ${subQuery}`);
+
+            query.andWhere('labels.name IN (:...names)', { names: filters.labels });
         }
 
         query.skip(pagination.offset).take(pagination.limit);
+
         return await query.getManyAndCount();
     }
 
@@ -63,6 +73,7 @@ export class TasksService {
             UpdateTaskDto.labels = this.getUniqueLabels(UpdateTaskDto.labels);
         }
         Object.assign(task, UpdateTaskDto);
+
         return await this.tasksRepository.save(task);
     }
 
@@ -88,9 +99,9 @@ export class TasksService {
         task: Task,
         labelsToRemove: CreateTaskLabelDto[]
     ): Promise<Task> {
-        // remove labels from task->labels and save() the Task
         const labelsToRemoveNames = this.getUniqueLabels(labelsToRemove).map(label => label.name);
         task.labels = task.labels.filter(label => !labelsToRemoveNames.includes(label.name));
+
         return await this.tasksRepository.save(task);
     }
 

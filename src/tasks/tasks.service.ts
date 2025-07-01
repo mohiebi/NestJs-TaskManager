@@ -23,23 +23,25 @@ export class TasksService {
         filters: FindTaskParams,
         pagination: PaginationsParams,
     ): Promise<[Task[], number]> {
-        const where: FindOptionsWhere<Task> = {};
-
+        const query = this.tasksRepository
+            .createQueryBuilder('task')
+            .leftJoinAndSelect('task.labels', 'labels');
+            
         if (filters.status) {
-            where.status = filters.status;
+            query.andWhere('task.status = :status', { status: filters.status });
         }
 
-        if (filters.search?.trim()) {
-            where.title = Like(`%${filters.search}%`);
-            where.description = Like(`%${filters.search}%`);
+        if (filters.search) {
+            query.andWhere(
+                '(task.title ILIKE :search OR task.description ILIKE :search)',
+                { search: `%${filters.search}%` },
+            );
         }
 
-        return await this.tasksRepository.findAndCount({
-            where,
-            relations: ['labels'],
-            skip: pagination.offset,
-            take: pagination.limit,
-        });
+        query.skip(pagination.offset).take(pagination.limit);
+
+        query.skip(pagination.offset).take(pagination.limit);
+        return await query.getManyAndCount();
     }
 
     public async findOne(id: string): Promise<Task | null> {

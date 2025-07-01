@@ -8,6 +8,7 @@ import { CreateTaskLabelDto } from './create-task-label.dto';
 import { TaskLabel } from './task-label.entity';
 import { FindTaskParams } from './find-task.params';
 import { PaginationsParams } from 'src/common/pagination.params';
+import { FindOptionsWhere, Like } from 'typeorm';
 
 @Injectable()
 export class TasksService {
@@ -22,10 +23,19 @@ export class TasksService {
         filters: FindTaskParams,
         pagination: PaginationsParams,
     ): Promise<[Task[], number]> {
+        const where: FindOptionsWhere<Task> = {};
+
+        if (filters.status) {
+            where.status = filters.status;
+        }
+
+        if (filters.search?.trim()) {
+            where.title = Like(`%${filters.search}%`);
+            where.description = Like(`%${filters.search}%`);
+        }
+
         return await this.tasksRepository.findAndCount({
-            where: {
-                status: filters.status
-            },
+            where,
             relations: ['labels'],
             skip: pagination.offset,
             take: pagination.limit,

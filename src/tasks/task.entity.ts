@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { TaskStatus } from "./task.model";
 import { User } from "src/Users/user.entity";
 import { TaskLabel } from "./task-label.entity";
@@ -39,4 +39,10 @@ export class Task {
 
     @ManyToOne(() => User, user => user.tasks, { nullable: false })
     user: User;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
 }

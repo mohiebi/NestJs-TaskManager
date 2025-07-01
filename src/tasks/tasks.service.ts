@@ -48,6 +48,8 @@ export class TasksService {
             query.andWhere('labels.name IN (:...names)', { names: filters.labels });
         }
 
+        query.orderBy(`task.${filters.sortBy}`, filters.sortOrder);
+
         query.skip(pagination.offset).take(pagination.limit);
 
         return await query.getManyAndCount();

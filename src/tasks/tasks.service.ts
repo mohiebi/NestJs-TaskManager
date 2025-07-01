@@ -28,17 +28,12 @@ export class TasksService {
             .leftJoinAndSelect('task.labels', 'labels');
             
         if (filters.status) {
-            query.andWhere('task.status = :status', { status: filters.status });
+            query.andWhere('task.status = :status', {status: filters.status});
         }
 
         if (filters.search) {
-            query.andWhere(
-                '(task.title ILIKE :search OR task.description ILIKE :search)',
-                { search: `%${filters.search}%` },
-            );
+            query.andWhere('(task.title ILIKE :search OR task.description ILIKE :search)', {search: `%${filters.search}%`})
         }
-
-        query.skip(pagination.offset).take(pagination.limit);
 
         query.skip(pagination.offset).take(pagination.limit);
         return await query.getManyAndCount();

@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TasksModule } from './tasks/tasks.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { appConfig } from './config/app.config';
 import { appConfigSchema, ConfigType } from './config/config.types';
 import { typeOrmConfig } from './config/database.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,6 +10,7 @@ import { TypeConfigService } from './config/type-config.service';
 import { Task } from './tasks/task.entity';
 import { User } from './Users/user.entity';
 import { TaskLabel } from './tasks/task-label.entity';
+import { authConfig } from './config/auth.config';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { TaskLabel } from './tasks/task-label.entity';
       }),
     }),
     ConfigModule.forRoot({
-      load: [appConfig, typeOrmConfig],
+      load: [typeOrmConfig, authConfig],
       validationSchema: appConfigSchema,
       validationOptions:{
         // allowUnknown: true,

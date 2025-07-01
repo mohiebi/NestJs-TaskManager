@@ -35,6 +35,10 @@ export class TasksService {
             query.andWhere('(task.title ILIKE :search OR task.description ILIKE :search)', {search: `%${filters.search}%`})
         }
 
+        if (filters.labels?.length) {
+            query.andWhere('labels.name IN (:...labels)', { labels: filters.labels });
+        }
+
         query.skip(pagination.offset).take(pagination.limit);
         return await query.getManyAndCount();
     }

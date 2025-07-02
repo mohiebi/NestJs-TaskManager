@@ -6,8 +6,8 @@ import { Task } from './task.entity';
 import { TaskLabel } from './task-label.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Task, TaskLabel])],
-  controllers: [TasksController],
-  providers: [TasksService]
+    imports: [TypeOrmModule.forFeature([Task, TaskLabel])],
+    controllers: [TasksController],
+    providers: [TasksService],
 })
 export class TasksModule {}

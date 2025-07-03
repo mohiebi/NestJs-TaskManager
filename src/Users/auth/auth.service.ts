@@ -4,6 +4,8 @@ import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../create-user.dto';
 import { User } from '../user.entity';
 import { PasswordService } from '../password/password.service';
+import { LoginDto } from '../user/login.dto';
+import { LoginResponse } from '../user/login.response';
 
 @Injectable()
 export class AuthService {
@@ -24,20 +26,22 @@ export class AuthService {
         return user;
     }
 
-    public async login(email: string, password: string): Promise<string> {
-        const user = await this.userService.findOneByEmail(email);
+    public async login(loginDto: LoginDto): Promise<LoginResponse> {
+        const user = await this.userService.findOneByEmail(loginDto.email);
 
         if (!user) {
             throw new UnauthorizedException('Invalid email or password');
         }
 
-        const passwordValid = await this.passwordService.verifyPassword(password, user?.password);
+        const passwordValid = await this.passwordService.verifyPassword(loginDto.password, user?.password);
 
         if (!passwordValid) {
             throw new UnauthorizedException('Invalid email or password');
         }
 
-        return this.generateToken(user);
+        const accessToken = await this.generateToken(user);
+
+        return { accessToken };
     }
 
     private async generateToken(user: User): Promise<string> {

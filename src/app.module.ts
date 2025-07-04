@@ -14,33 +14,34 @@ import { authConfig } from './config/auth.config';
 import { UsersModule } from './Users/users.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (ConfigService: TypeConfigService) => ({
-        ...ConfigService.get('database'),
-        entities: [Task, User, TaskLabel],
-      }),
-    }),
-    ConfigModule.forRoot({
-      load: [typeOrmConfig, authConfig],
-      validationSchema: appConfigSchema,
-      validationOptions:{
-        // allowUnknown: true,
-        abortEarly: true,
-      }
-    }),
-    TasksModule,
-    UsersModule
-  ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: TypeConfigService,
-      useExisting: ConfigService,
-    },
-  ],
+    imports: [
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (ConfigService: TypeConfigService) => ({
+                ...ConfigService.get('database'),
+                entities: [Task, User, TaskLabel],
+            }),
+        }),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            load: [typeOrmConfig, authConfig],
+            validationSchema: appConfigSchema,
+            validationOptions: {
+                // allowUnknown: true,
+                abortEarly: true,
+            },
+        }),
+        TasksModule,
+        UsersModule,
+    ],
+    controllers: [AppController],
+    providers: [
+        AppService,
+        {
+            provide: TypeConfigService,
+            useExisting: ConfigService,
+        },
+    ],
 })
 export class AppModule {}

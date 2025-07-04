@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../create-user.dto';
@@ -16,7 +20,9 @@ export class AuthService {
     ) {}
 
     public async register(createUserDto: CreateUserDto): Promise<User> {
-        const existingUser = await this.userService.findOneByEmail(createUserDto.email);
+        const existingUser = await this.userService.findOneByEmail(
+            createUserDto.email,
+        );
         if (existingUser) {
             throw new ConflictException('Email already exists');
         }
@@ -33,7 +39,10 @@ export class AuthService {
             throw new UnauthorizedException('Invalid email or password');
         }
 
-        const passwordValid = await this.passwordService.verifyPassword(loginDto.password, user?.password);
+        const passwordValid = await this.passwordService.verifyPassword(
+            loginDto.password,
+            user?.password,
+        );
 
         if (!passwordValid) {
             throw new UnauthorizedException('Invalid email or password');
@@ -45,7 +54,7 @@ export class AuthService {
     }
 
     private async generateToken(user: User): Promise<string> {
-        const payload = { sub: user.id, name: user.name };
+        const payload = { sub: user.id, name: user.name, roles: user.roles };
         return this.jwtService.sign(payload);
     }
 }

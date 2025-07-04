@@ -1,8 +1,7 @@
 {
   "singleQuote": true,
   "semi": true,
-  "tabWidth":4,
-  "printWidth": 150,
+  "tabWidth": 4,
   "trailingComma": "all",
   "bracketSpacing": true,
   "arrowParens": "always",

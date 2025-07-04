@@ -17,7 +17,7 @@ import { LoginDto } from '../user/login.dto';
 import { LoginResponse } from '../user/login.response';
 import { AuthRequest } from '../user/auth.request';
 import { UserService } from '../user/user.service';
-import { AuthGuard } from '../user/auth.guard';
+import { AuthGuard } from '../auth.guard';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)

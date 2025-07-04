@@ -7,15 +7,9 @@ import { testConfig } from '../config/test.config';
 // #endregion
 
 export class TestSetup {
-    // #region Properties - What this class manages
-    // The NestJS application instance we'll test against
     app: INestApplication;
-    // Database connection that lets us clean data between tests
     dataSource: DataSource;
-    // #endregion
 
-    // #region Setup - Creating and initializing test environment
-    // Static factory method - easier to use than constructor
     static async create(module: any) {
         const instance = new TestSetup();
         await instance.init(module);
@@ -24,12 +18,10 @@ export class TestSetup {
 
     // Sets up testing module with custom configuration
     private async init(module: any) {
-        // Create testing module with our app's module
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [module],
         })
             // Replace normal config with test config
-            // This lets us use different database, port etc. for testing
             .overrideProvider(ConfigService)
             .useValue({
                 get: (key: string) => {

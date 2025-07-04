@@ -7,26 +7,23 @@ import { UpdateTaskDto } from './update-task.dto';
 import { Task } from './task.entity';
 import { CreateTaskLabelDto } from './create-task-label.dto';
 import { FindTaskParams } from './find-task.params';
-import { PaginationsParams } from 'src/common/pagination.params';
-import { PaginationResponse } from 'src/common/pagination.response';
+import { PaginationsParams } from '../common/pagination.params';
+import { PaginationResponse } from '../common/pagination.response';
 
 @Controller('tasks')
 export class TasksController {
     constructor(private readonly tasksService: TasksService) {}
     @Get()
-    public async findAll(
-        @Query() filters: FindTaskParams,
-        @Query() pagination: PaginationsParams
-    ): Promise<PaginationResponse<Task>> {
+    public async findAll(@Query() filters: FindTaskParams, @Query() pagination: PaginationsParams): Promise<PaginationResponse<Task>> {
         const [items, total] = await this.tasksService.findAll(filters, pagination);
 
         return {
             data: items,
             meta: {
                 total,
-                ...pagination
-            }
-        }
+                ...pagination,
+            },
+        };
     }
 
     @Get(':id')
@@ -40,20 +37,14 @@ export class TasksController {
     }
 
     @Patch('/:id/status')
-    public async updateTaskStatus(
-        @Param() params: FindOneParams,
-        @Body() body: updateTaskStatusDto,
-    ): Promise<Task> {
+    public async updateTaskStatus(@Param() params: FindOneParams, @Body() body: updateTaskStatusDto): Promise<Task> {
         const task = await this.findOneOrFail(params.id);
         task.status = body.status;
-       return task;
+        return task;
     }
 
     @Put('/:id')
-    public async updateTask(
-        @Param() params: FindOneParams,
-        @Body() UpdateTaskDto: UpdateTaskDto,
-    ): Promise<Task> {
+    public async updateTask(@Param() params: FindOneParams, @Body() UpdateTaskDto: UpdateTaskDto): Promise<Task> {
         const task = await this.findOneOrFail(params.id);
         return await this.tasksService.updateTask(task, UpdateTaskDto);
     }
@@ -66,20 +57,14 @@ export class TasksController {
     }
 
     @Post('/:id/labels')
-    public async addLabels(
-        @Param() params: FindOneParams,
-        @Body() labelDtos: CreateTaskLabelDto[],
-    ): Promise<Task> {
+    public async addLabels(@Param() params: FindOneParams, @Body() labelDtos: CreateTaskLabelDto[]): Promise<Task> {
         const task = await this.findOneOrFail(params.id);
         return await this.tasksService.addLabels(task, labelDtos);
     }
 
     @Delete('/:id/labels')
     @HttpCode(HttpStatus.NO_CONTENT)
-    public async removeLabels(
-        @Param() { id }: FindOneParams,
-        @Body() labelDtos: CreateTaskLabelDto[],
-    ): Promise<void> {
+    public async removeLabels(@Param() { id }: FindOneParams, @Body() labelDtos: CreateTaskLabelDto[]): Promise<void> {
         const task = await this.findOneOrFail(id);
         await this.tasksService.removeLabels(task, labelDtos);
     }

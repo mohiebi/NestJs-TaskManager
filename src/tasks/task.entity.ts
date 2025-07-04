@@ -1,7 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { TaskStatus } from "./task.model";
-import { User } from "src/Users/user.entity";
-import { TaskLabel } from "./task-label.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { TaskStatus } from './task.model';
+import { TaskLabel } from './task-label.entity';
+import { User } from '../Users/user.entity';
 
 @Entity()
 export class Task {
@@ -11,33 +11,33 @@ export class Task {
     @Column({
         type: 'varchar',
         length: 100,
-        nullable: false
+        nullable: false,
     })
     title: string;
 
     @Column({
         type: 'text',
-        nullable: false
+        nullable: false,
     })
     description: string;
 
     @Column({
         type: 'enum',
         enum: TaskStatus,
-        default: TaskStatus.OPEN
+        default: TaskStatus.OPEN,
     })
-    status : TaskStatus;
+    status: TaskStatus;
 
     @Column({
         type: 'uuid',
-        nullable: false
+        nullable: false,
     })
     userId: string;
 
-    @OneToMany(() => TaskLabel, label => label.task, { cascade: true })
+    @OneToMany(() => TaskLabel, (label) => label.task, { cascade: true })
     labels: TaskLabel[];
 
-    @ManyToOne(() => User, user => user.tasks, { nullable: false })
+    @ManyToOne(() => User, (user) => user.tasks, { nullable: false })
     user: User;
 
     @CreateDateColumn()

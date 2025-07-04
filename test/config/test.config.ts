@@ -9,7 +9,9 @@ export const testConfig = {
         synchronize: true,
     },
     auth: {
-        secret: 'your_jwt_secret',
-        expiresIn: '1m',
+        jwt: {
+            secret: 'your_jwt_secret',
+            expiresIn: '1m',
+        },
     },
 };

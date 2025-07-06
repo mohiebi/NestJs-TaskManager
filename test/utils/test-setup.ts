@@ -34,6 +34,7 @@ export class TestSetup {
 
         // Create NestJS application
         this.app = moduleFixture.createNestApplication();
+
         // Get database connection
         this.dataSource = moduleFixture.get(DataSource);
         // Initialize app (starts servers, connects to db etc.)
@@ -47,11 +48,15 @@ export class TestSetup {
         // Get all entity metadata to find table names
         const entities = this.dataSource.entityMetadatas;
         // Create list of table names for SQL query
-        const tableNames = entities.map((entity) => `"${entity.tableName}"`).join(', ');
+        const tableNames = entities
+            .map((entity) => `"${entity.tableName}"`)
+            .join(', ');
         // TRUNCATE removes all data
         // RESTART IDENTITY resets auto-increment counters
         // CASCADE handles foreign key relationships
-        await this.dataSource.query(`TRUNCATE ${tableNames} RESTART IDENTITY CASCADE;`);
+        await this.dataSource.query(
+            `TRUNCATE ${tableNames} RESTART IDENTITY CASCADE;`,
+        );
     }
     // #endregion
 

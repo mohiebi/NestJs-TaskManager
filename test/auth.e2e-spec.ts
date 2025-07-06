@@ -25,7 +25,7 @@ describe('AppController (e2e)', () => {
     const testUser = {
         email: 'test@example.com',
         name: 'Test User',
-        password: 'test-password',
+        password: 'Password@123',
     };
 
     it('should require authentication for protected routes', async () => {

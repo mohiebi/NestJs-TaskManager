@@ -171,4 +171,21 @@ describe('AppController (e2e)', () => {
                 expect(res.body.message).toBe('This is an admin-only route');
             });
     });
+
+    it('/auth/admin (GET) - regular user denied', async () => {
+        await request(testSetup.app.getHttpServer())
+            .post('/auth/register')
+            .send(testUser);
+
+        const response = await request(testSetup.app.getHttpServer())
+            .post('/auth/login')
+            .send({ email: testUser.email, password: testUser.password });
+
+        const token = response.body.accessToken;
+
+        return await request(testSetup.app.getHttpServer())
+            .get('/auth/admin')
+            .set('Authorization', `Bearer ${token}`)
+            .expect(403);
+    });
 });

@@ -1,4 +1,11 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
+import {
+    IsEnum,
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    IsUUID,
+    ValidateNested,
+} from 'class-validator';
 import { TaskStatus } from './task.model';
 import { CreateTaskLabelDto } from './create-task-label.dto';
 import { Type } from 'class-transformer';
@@ -16,8 +23,6 @@ export class CreateTaskDto {
     @IsEnum(TaskStatus)
     status: TaskStatus;
 
-    @IsNotEmpty()
-    @IsUUID()
     userId: string;
 
     @IsOptional()

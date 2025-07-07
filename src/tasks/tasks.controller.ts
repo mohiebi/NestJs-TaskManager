@@ -32,10 +32,12 @@ export class TasksController {
     public async findAll(
         @Query() filters: FindTaskParams,
         @Query() pagination: PaginationsParams,
+        @CurrentUserID() userId: string,
     ): Promise<PaginationResponse<Task>> {
         const [items, total] = await this.tasksService.findAll(
             filters,
             pagination,
+            userId,
         );
 
         return {

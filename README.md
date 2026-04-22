@@ -1,98 +1,354 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS Task Manager
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A backend task management API built with NestJS, TypeScript, PostgreSQL, TypeORM, JWT authentication, role-based access control, validation, filtering, pagination, and automated tests.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This project is designed as a practical backend API: users can register, log in, manage their own tasks, organize tasks with labels, filter and search task lists, and access protected routes with JWT tokens.
 
-## Description
+## Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- User registration and login
+- Password hashing with bcrypt
+- JWT authentication with protected routes
+- Role-based access control for admin-only routes
+- User-owned task management
+- Task labels with duplicate prevention
+- Task filtering by status, search text, and labels
+- Sorting and pagination
+- PostgreSQL persistence through TypeORM
+- Database migrations
+- DTO validation with `class-validator`
+- Unit and e2e test setup
+- Docker Compose PostgreSQL service
 
-## Project setup
+## Tech Stack
 
-```bash
-$ npm install
+- NestJS 11
+- TypeScript
+- PostgreSQL
+- TypeORM
+- JWT and Passport
+- bcrypt
+- class-validator and class-transformer
+- Jest and Supertest
+- Docker Compose
+
+## Project Structure
+
+```text
+src/
+  Users/
+    auth/                 # Register, login, profile, admin route
+    decorators/           # Public, roles, current user decorators
+    password/             # Password hashing and comparison
+    user/                 # User service, guards, response DTOs
+    user.entity.ts        # User database entity
+    role.enum.ts          # USER and ADMIN roles
+  tasks/
+    tasks.controller.ts   # Task API endpoints
+    tasks.service.ts      # Task business logic
+    task.entity.ts        # Task database entity
+    task-label.entity.ts  # Task label entity
+    *.dto.ts              # Create, update, status, and label DTOs
+  common/
+    pagination.params.ts
+    pagination.response.ts
+  config/
+    auth.config.ts
+    database.config.ts
+    config.types.ts
+  migrations/
+    1751894251021-InitialMigration.ts
+test/
+  *.e2e-spec.ts           # End-to-end API tests
+  utils/
+  config/
 ```
 
-## Compile and run the project
+## Requirements
+
+- Node.js
+- npm
+- Docker and Docker Compose, or a local PostgreSQL database
+
+## Getting Started
+
+Install dependencies:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+Start PostgreSQL with Docker:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker compose up -d
 ```
 
-## Deployment
+Create a `.env` file in the project root:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_DATABASE=tasks
+DB_SYNC=0
+JWT_SECRET=change-this-secret
+JWT_EXPIRES_IN=60m
+```
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Run the database migration:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run migration:run
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Start the API in development mode:
 
-## Resources
+```bash
+npm run start:dev
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+The API runs on:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```text
+http://localhost:3000
+```
 
-## Support
+## Available Scripts
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npm run start       # Start the app
+npm run start:dev   # Start with watch mode
+npm run build       # Compile TypeScript
+npm run start:prod  # Run compiled app from dist/
+npm run lint        # Run ESLint with fixes
+npm run format      # Format source and test files
+npm run test        # Run unit tests
+npm run test:e2e    # Run e2e tests
+npm run test:cov    # Run tests with coverage
+```
 
-## Stay in touch
+## API Overview
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Auth
 
-## License
+Register a user:
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```http
+POST /auth/register
+Content-Type: application/json
+
+{
+  "name": "Mohi",
+  "email": "mohi@example.com",
+  "password": "Password@123"
+}
+```
+
+Login:
+
+```http
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "mohi@example.com",
+  "password": "Password@123"
+}
+```
+
+The login response returns an access token:
+
+```json
+{
+  "accessToken": "jwt-token"
+}
+```
+
+Use the token on protected routes:
+
+```http
+Authorization: Bearer jwt-token
+```
+
+Get current user profile:
+
+```http
+GET /auth/profile
+Authorization: Bearer jwt-token
+```
+
+Admin-only route:
+
+```http
+GET /auth/admin
+Authorization: Bearer jwt-token
+```
+
+### Tasks
+
+Create a task:
+
+```http
+POST /tasks
+Authorization: Bearer jwt-token
+Content-Type: application/json
+
+{
+  "title": "Build task API",
+  "description": "Create CRUD endpoints for tasks",
+  "status": "OPEN",
+  "labels": [
+    { "name": "backend" },
+    { "name": "nestjs" }
+  ]
+}
+```
+
+Get tasks for the authenticated user:
+
+```http
+GET /tasks
+Authorization: Bearer jwt-token
+```
+
+Filter, search, sort, and paginate tasks:
+
+```http
+GET /tasks?status=OPEN&search=api&labels=backend,nestjs&sortBy=createdAt&sortOrder=DESC&limit=10&offset=0
+Authorization: Bearer jwt-token
+```
+
+Get one task:
+
+```http
+GET /tasks/:id
+Authorization: Bearer jwt-token
+```
+
+Update a task:
+
+```http
+PUT /tasks/:id
+Authorization: Bearer jwt-token
+Content-Type: application/json
+
+{
+  "title": "Build task API v2",
+  "description": "Improve task endpoints and validation",
+  "status": "IN_PROGRESS"
+}
+```
+
+Update only task status:
+
+```http
+PATCH /tasks/:id/status
+Authorization: Bearer jwt-token
+Content-Type: application/json
+
+{
+  "status": "DONE"
+}
+```
+
+Add labels:
+
+```http
+POST /tasks/:id/labels
+Authorization: Bearer jwt-token
+Content-Type: application/json
+
+[
+  { "name": "api" },
+  { "name": "postgres" }
+]
+```
+
+Remove labels:
+
+```http
+DELETE /tasks/:id/labels
+Authorization: Bearer jwt-token
+Content-Type: application/json
+
+[
+  { "name": "api" }
+]
+```
+
+Delete a task:
+
+```http
+DELETE /tasks/:id
+Authorization: Bearer jwt-token
+```
+
+## Task Status Values
+
+```text
+OPEN
+IN_PROGRESS
+DONE
+```
+
+## Environment Variables
+
+| Variable | Description | Example |
+| --- | --- | --- |
+| `DB_HOST` | PostgreSQL host | `localhost` |
+| `DB_PORT` | PostgreSQL port | `5432` |
+| `DB_USER` | PostgreSQL username | `postgres` |
+| `DB_PASSWORD` | PostgreSQL password | `postgres` |
+| `DB_DATABASE` | PostgreSQL database name | `tasks` |
+| `DB_SYNC` | TypeORM synchronize flag. Use `0` with migrations. | `0` |
+| `JWT_SECRET` | Secret used to sign JWT tokens | `change-this-secret` |
+| `JWT_EXPIRES_IN` | JWT expiration time | `60m` |
+
+## Database
+
+The project uses TypeORM with PostgreSQL. The Docker Compose file starts a PostgreSQL 16 container with:
+
+```text
+database: tasks
+user: postgres
+password: postgres
+port: 5432
+```
+
+Generate a migration after changing entities:
+
+```bash
+npm run migration:generate -- src/migrations/YourMigrationName
+```
+
+Run migrations:
+
+```bash
+npm run migration:run
+```
+
+## Tests
+
+Run unit tests:
+
+```bash
+npm run test
+```
+
+Run e2e tests:
+
+```bash
+npm run test:e2e
+```
+
+Run coverage:
+
+```bash
+npm run test:cov
+```
+
+## Notes
+
+This project focuses on backend API architecture with NestJS: modules, services, controllers, guards, decorators, DTO validation, persistence, migrations, and testable business logic.
